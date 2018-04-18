@@ -19,6 +19,7 @@ pipeline {
 			agent {
 				docker {
 					image "${params.DOCKER_IMAGE}"
+          customWorkspace "$JENKINS_HOME/workspace/$BUILD_TAG"
 				}
 			}
 			steps {
@@ -27,7 +28,13 @@ pipeline {
 			}
 		}
 		stage('collect test results') {
-			steps {
+    agent {
+      docker {
+        image "${params.DOCKER_IMAGE}"
+        customWorkspace "$JENKINS_HOME/workspace/$BUILD_TAG"
+      }
+    }
+      steps {
 				junit "build/results.xml"
 			}
     }
