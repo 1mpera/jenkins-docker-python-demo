@@ -27,17 +27,7 @@ pipeline {
 				sh '. /tmp/venv/bin/activate && python -m pytest --junitxml=build/results.xml'
 			}
 		}
-		stage('collect test results') {
-    agent {
-      docker {
-        image "${params.DOCKER_IMAGE}"
-        customWorkspace "$JENKINS_HOME/workspace/$BUILD_TAG"
-      }
-    }
-      steps {
-				junit "build/results.xml"
-			}
-    }
+
 
 	}
 
