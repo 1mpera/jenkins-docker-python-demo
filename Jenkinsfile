@@ -4,7 +4,7 @@ pipeline {
 		buildDiscarder(logRotator(numToKeepStr: '5'))
 	}
 	parameters {
-		string(name: 'DOCKER_IMAGE', defaultValue: 'maxsum:build'', description: '')
+		string(name: 'DOCKER_IMAGE', defaultValue: 'maxsum:build', description: '')
 		string(name: 'LATEST_BUILD_TAG', defaultValue: 'build-latest', description: '')
 	}
 	stages {
@@ -16,7 +16,7 @@ pipeline {
 		stage("test") {
 			agent {
 				docker {
-					image "${params.DOCKER_IMAGE}s"
+					image "${params.DOCKER_IMAGE}"
 				}
 			}
 			steps {
