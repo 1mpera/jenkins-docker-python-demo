@@ -18,11 +18,11 @@ pipeline {
 		stage("test") {
 			agent {
 				docker {
-					image params.DOCKER_IMAGE
+					image "${params.DOCKER_IMAGE}"
 				}
 			}
 			steps {
-				sh "pwd && whoami"
+				sh "pwd"
 				sh '. /tmp/venv/bin/activate && python -m pytest --junitxml=build/results.xml'
 			}
 		}
