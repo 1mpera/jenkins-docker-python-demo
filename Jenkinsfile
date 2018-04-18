@@ -1,20 +1,35 @@
-node {
-    stage('Cleanup') {
-        step([$class: 'WsCleanup'])
+pipeline {
+	agent any
+	options {
+		buildDiscarder(logRotator(numToKeepStr: '5'))
+	}
+	parameters {
+		string(name: 'DOCKER_IMAGE', defaultValue: 'maxsum:build'', description: '')
+		string(name: 'LATEST_BUILD_TAG', defaultValue: 'build-latest', description: '')
+	}
+	stages {
+    stage("build Docker image") {
+      steps {
+        docker.build("${params.DOCKER_IMAGE}")
+      }
     }
-    stage('Checkout SCM') {
-        checkout scm
+		stage("test") {
+			agent {
+				docker {
+					image "${params.DOCKER_IMAGE}s"
+				}
+			}
+			steps {
+				sh "pwd && whoami"
+				sh '. /tmp/venv/bin/activate && python -m pytest --junitxml=build/results.xml'
+			}
+		}
+		stage('collect test results') {
+			steps {
+				junit "build/results.xml"
+			}
     }
-    def pythonImage
-    stage('build docker image') {
-        pythonImage = docker.build("maxsum:build")
-    }
-    stage('test') {
-        pythonImage.inside {
-            sh '. /tmp/venv/bin/activate && python -m pytest --junitxml=build/results.xml'
-        }
-    }
-    stage('collect test results') {
-        junit 'build/results.xml'
-    }
+
+	}
+
 }
