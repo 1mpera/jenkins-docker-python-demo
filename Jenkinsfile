@@ -10,7 +10,9 @@ pipeline {
 	stages {
     stage("build Docker image") {
       steps {
-        docker.build("${params.DOCKER_IMAGE}")
+        script {
+          docker.build("${params.DOCKER_IMAGE}")
+        }
       }
     }
 		stage("test") {
